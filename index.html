@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Чек-лист визуальной самооценки износа здания медицинской организации</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Чек-лист износа">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--text:#101828;--muted:#667085;--line:#d0d5dd;--accent:#175cd3;--danger:#b42318;--dangerBg:#fff1f3;--warn:#b54708;--ok:#027a48;--okBg:#ecfdf3;--shadow:0 8px 24px rgba(16,24,40,.08);--r:18px}
+*{box-sizing:border-box} html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-size:16px;line-height:1.45} body{padding:12px 12px 170px} .wrap{max-width:980px;margin:0 auto} h1{font-size:23px;line-height:1.15;margin:0} h2{font-size:20px;margin:0 0 12px} .head,.section,.resultBox{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px;margin:12px 0} .muted,.small{color:var(--muted);font-size:14px} .grid{display:grid;grid-template-columns:1fr;gap:12px} @media(min-width:720px){.grid.two{grid-template-columns:1fr 1fr}} label{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:14px} input,select,textarea{width:100%;min-height:52px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;font-size:16px;color:var(--text)} textarea{min-height:84px;resize:vertical} .card{display:block;border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0;background:#fff} .card-title{font-weight:900;margin-bottom:8px} .weight{display:inline-block;margin-left:6px;color:var(--accent);font-size:13px} .missing{border-color:var(--danger)!important;background:var(--dangerBg)!important} .field-missing{border-color:var(--danger)!important;background:var(--dangerBg)!important} .btnbar{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px} button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;appearance:none;border:0;border-radius:14px;min-height:52px;padding:12px 16px;font-weight:900;font-size:16px;background:var(--accent);color:#fff;cursor:pointer} button.secondary{background:#344054} button.light{background:#fff;color:var(--accent);border:1px solid var(--accent)} button.danger{background:var(--danger)} .status{padding:12px;border-radius:14px;background:#f9fafb;border:1px solid var(--line);margin-top:8px} .status.ok{background:var(--okBg);color:var(--ok)} .status.warn{background:#fffaeb;color:var(--warn)} .status.bad{background:#fff1f3;color:var(--danger)} .preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px} .preview img{width:78px;height:78px;object-fit:cover;border-radius:12px;border:1px solid var(--line)} #resultIndex{font-size:38px;font-weight:950;color:var(--accent);line-height:1} #resultSummary{font-weight:900} #report{display:none;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:12px 0} #report.visible{display:block} #report table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px} #report th,#report td{border:1px solid #98a2b3;padding:6px;text-align:left;vertical-align:top} #report th{background:#f2f4f7} #report img{max-width:160px;max-height:120px;object-fit:cover;margin:4px;border:1px solid #98a2b3;border-radius:6px} .sticky{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(16,24,40,.12);padding:10px 14px calc(10px + env(safe-area-inset-bottom));z-index:50} .sticky-inner{max-width:980px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center} .sticky-num{font-size:28px;font-weight:950;color:var(--accent)} .print-only{display:none}
+@media(max-width:420px){body{padding-left:10px;padding-right:10px}h1{font-size:21px}.head,.section,.resultBox{padding:14px;border-radius:16px}button{width:100%}.btnbar{display:grid;grid-template-columns:1fr}.sticky-inner{grid-template-columns:1fr}}
+@media print{body{background:#fff;padding:0}.no-print,.sticky{display:none!important}#report{display:block!important;border:0;box-shadow:none;padding:0;margin:0}.print-only{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="head"><h1>Чек-лист визуальной самооценки износа здания медицинской организации</h1><p class="muted">Форма предназначена для предварительной визуальной самооценки. Она не заменяет техническое обследование специализированной организацией.</p></header>
+
+<section class="resultBox no-print"><h2>Расчёт и предварительный вывод</h2><div id="scriptStatus" class="status warn">Запуск расчёта проверяется…</div><div class="grid two"><div><div class="small">Предварительный визуальный индекс</div><div id="resultIndex">—</div></div><div><div class="small">Статус заполнения</div><div id="resultSummary">Заполните баллы в блоке 3.</div><div id="resultConclusion" class="status">Результат появится сразу после выбора баллов.</div></div></div><div class="btnbar"><button id="btnCalc" type="button">Пересчитать</button><button id="btnReport" type="button" class="secondary">Показать отчёт</button><button id="btnPrint" type="button" class="secondary">Сформировать PDF / печать</button><button id="btnDownload" type="button" class="light">Скачать HTML-отчёт</button><button id="btnShare" type="button" class="light">Поделиться резюме</button><button id="btnClear" type="button" class="danger">Очистить</button></div><p class="muted">Нажмите «Сформировать PDF / печать» → выберите «Сохранить как PDF» или «Поделиться» → сохраните файл либо отправьте его по почте, в мессенджер или другое приложение.</p></section>
+
+<form id="checklistForm" autocomplete="on">
+<section class="section"><h2>1. Общие сведения</h2><div class="grid two"><label>Наименование медицинской организации *<input name="org" data-required="1" type="text"></label><label>Адрес объекта *<input name="address" data-required="1" type="text"></label><label>Корпус / здание<input name="building" type="text"></label><label>Дата осмотра *<input name="date" data-required="1" type="date"></label><label>Ф.И.О. заполнившего *<input name="person" data-required="1" type="text"></label><label>Должность *<input name="role" data-required="1" type="text"></label></div><label>Краткое описание объекта / примечание<textarea name="note"></textarea></label></section>
+
+<section class="section"><h2>2. Красные флаги</h2><p class="muted">Если выбран хотя бы один ответ «Да», итоговый вывод автоматически переводится в режим необходимости внепланового обследования.</p><article class="card" data-red-card="1" data-title="Сквозные трещины в несущих стенах, колоннах, ригелях, плитах перекрытия">
+  <div class="card-title">1. Сквозные трещины в несущих стенах, колоннах, ригелях, плитах перекрытия</div>
+  <div class="grid two">
+    <label>Выявлено *<select name="red1" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
+    <label>Зона / этаж / помещение<input name="redzone1" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
+  </div>
+  <label>Комментарий<textarea name="redcomment1" placeholder="Кратко опишите признак"></textarea></label>
+  <div class="grid two">
+    <label>Камера<input name="redcam1" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red1"></label>
+    <label>Галерея / файлы<input name="redgal1" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red1"></label>
+  </div>
+  <div class="preview" id="preview-red1"></div>
+</article>
+<article class="card" data-red-card="1" data-title="Видимый прогиб перекрытий, балок, лестничных маршей или площадок">
+  <div class="card-title">2. Видимый прогиб перекрытий, балок, лестничных маршей или площадок</div>
+  <div class="grid two">
+    <label>Выявлено *<select name="red2" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
+    <label>Зона / этаж / помещение<input name="redzone2" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
+  </div>
+  <label>Комментарий<textarea name="redcomment2" placeholder="Кратко опишите признак"></textarea></label>
+  <div class="grid two">
+    <label>Камера<input name="redcam2" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red2"></label>
+    <label>Галерея / файлы<input name="redgal2" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red2"></label>
+  </div>
+  <div class="preview" id="preview-red2"></div>
+</article>
+<article class="card" data-red-card="1" data-title="Просадка пола, деформация отмостки, крен здания, перекос оконных/дверных проёмов">
+  <div class="card-title">3. Просадка пола, деформация отмостки, крен здания, перекос оконных/дверных проёмов</div>
+  <div class="grid two">
+    <label>Выявлено *<select name="red3" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
+    <label>Зона / этаж / помещение<input name="redzone3" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
+  </div>
+  <label>Комментарий<textarea name="redcomment3" placeholder="Кратко опишите признак"></textarea></label>
+  <div class="grid two">
+    <label>Камера<input name="redcam3" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red3"></label>
+    <label>Галерея / файлы<input name="redgal3" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red3"></label>
+  </div>
+  <div class="preview" id="preview-red3"></div>
+</article>
+<article class="card" data-red-card="1" data-title="Обрушение, выпадение фрагментов фасада, кирпичной кладки, бетона, штукатурки с высоты">
+  <div class="card-title">4. Обрушение, выпадение фрагментов фасада, кирпичной кладки, бетона, штукатурки с высоты</div>
+  <div class="grid two">
+    <label>Выявлено *<select name="red4" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
+    <label>Зона / этаж / помещение<input name="redzone4" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
+  </div>
+  <label>Комментарий<textarea name="redcomment4" placeholder="Кратко опишите признак"></textarea></label>
+  <div class="grid two">
+    <label>Камера<input name="redcam4" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red4"></label>
+    <label>Галерея / файлы<input name="redgal4" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red4"></label>
+  </div>
+  <div class="preview" id="preview-red4"></div>
+</article>
+<article class="card" data-red-card="1" data-title="Регулярные протечки кровли над электрощитовой, серверной, кислородной, операционной, реанимацией, лабораторией">
+  <div class="card-title">5. Регулярные протечки кровли над электрощитовой, серверной, кислородной, операционной, реанимацией, лабораторией</div>
+  <div class="grid two">
+    <label>Выявлено *<select name="red5" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
+    <label>Зона / этаж / помещение<input name="redzone5" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
+  </div>
+  <label>Комментарий<textarea name="redcomment5" placeholder="Кратко опишите признак"></textarea></label>
+  <div class="grid two">
+    <label>Камера<input name="redcam5" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red5"></label>
+    <label>Галерея / файлы<input name="redgal5" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red5"></label>
+  </div>
+  <div class="preview" id="preview-red5"></div>
+</article>
+<article class="card" data-red-card="1" data-title="Следы замыкания, оплавления, запах гари, искрение, открытая проводка в зонах пребывания пациентов">
+  <div class="card-title">6. Следы замыкания, оплавления, запах гари, искрение, открытая проводка в зонах пребывания пациентов</div>
+  <div class="grid two">
+    <label>Выявлено *<select name="red6" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
+    <label>Зона / этаж / помещение<input name="redzone6" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
+  </div>
+  <label>Комментарий<textarea name="redcomment6" placeholder="Кратко опишите признак"></textarea></label>
+  <div class="grid two">
+    <label>Камера<input name="redcam6" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red6"></label>
+    <label>Галерея / файлы<input name="redgal6" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red6"></label>
+  </div>
+  <div class="preview" id="preview-red6"></div>
+</article>
+<article class="card" data-red-card="1" data-title="Неработающая пожарная сигнализация, система оповещения, дымоудаление, противопожарный водопровод при эксплуатации здания">
+  <div class="card-title">7. Неработающая пожарная сигнализация, система оповещения, дымоудаление, противопожарный водопровод при эксплуатации здания</div>
+  <div class="grid two">
+    <label>Выявлено *<select name="red7" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
+    <label>Зона / этаж / помещение<input name="redzone7" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
+  </div>
+  <label>Комментарий<textarea name="redcomment7" placeholder="Кратко опишите признак"></textarea></label>
+  <div class="grid two">
+    <label>Камера<input name="redcam7" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red7"></label>
+    <label>Галерея / файлы<input name="redgal7" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red7"></label>
+  </div>
+  <div class="preview" id="preview-red7"></div>
+</article>
+<article class="card" data-red-card="1" data-title="Затопление подвала, длительное увлажнение фундаментов, плесень и грибок в помещениях постоянного пребывания людей">
+  <div class="card-title">8. Затопление подвала, длительное увлажнение фундаментов, плесень и грибок в помещениях постоянного пребывания людей</div>
+  <div class="grid two">
+    <label>Выявлено *<select name="red8" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
+    <label>Зона / этаж / помещение<input name="redzone8" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
+  </div>
+  <label>Комментарий<textarea name="redcomment8" placeholder="Кратко опишите признак"></textarea></label>
+  <div class="grid two">
+    <label>Камера<input name="redcam8" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red8"></label>
+    <label>Галерея / файлы<input name="redgal8" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red8"></label>
+  </div>
+  <div class="preview" id="preview-red8"></div>
+</article>
+<article class="card" data-red-card="1" data-title="Отсутствует нормальная работа отопления, вентиляции, водоснабжения или канализации в лечебных помещениях">
+  <div class="card-title">9. Отсутствует нормальная работа отопления, вентиляции, водоснабжения или канализации в лечебных помещениях</div>
+  <div class="grid two">
+    <label>Выявлено *<select name="red9" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
+    <label>Зона / этаж / помещение<input name="redzone9" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
+  </div>
+  <label>Комментарий<textarea name="redcomment9" placeholder="Кратко опишите признак"></textarea></label>
+  <div class="grid two">
+    <label>Камера<input name="redcam9" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red9"></label>
+    <label>Галерея / файлы<input name="redgal9" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red9"></label>
+  </div>
+  <div class="preview" id="preview-red9"></div>
+</article>
+<article class="card" data-red-card="1" data-title="Есть помещения, где пациенты/персонал фактически не могут находиться из-за состояния конструкций, отделки, инженерных систем">
+  <div class="card-title">10. Есть помещения, где пациенты/персонал фактически не могут находиться из-за состояния конструкций, отделки, инженерных систем</div>
+  <div class="grid two">
+    <label>Выявлено *<select name="red10" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
+    <label>Зона / этаж / помещение<input name="redzone10" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
+  </div>
+  <label>Комментарий<textarea name="redcomment10" placeholder="Кратко опишите признак"></textarea></label>
+  <div class="grid two">
+    <label>Камера<input name="redcam10" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red10"></label>
+    <label>Галерея / файлы<input name="redgal10" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red10"></label>
+  </div>
+  <div class="preview" id="preview-red10"></div>
+</article></section>
+<section class="section"><h2>3. Основной визуальный чек-лист</h2><p class="muted">Выберите балл по каждому блоку. Комментарии и фото не блокируют расчёт.</p><article class="card" data-check-card="1" data-title="Фундаменты, подвал, цоколь, отмостка" data-weight="10">
+  <div class="card-title">1. Фундаменты, подвал, цоколь, отмостка <span class="weight">вес 10%</span></div>
+  <p class="muted">Что смотрит ЛПУ: Трещины в цоколе, просадки, разрушение отмостки, затопление подвала, сырость, грибок, солевые высолы</p>
+  <label>Балл визуального износа *<select name="score1" data-score="1" data-weight="10" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
+  <div class="grid two">
+    <label>Зона / этаж / помещение<input name="zone1" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
+    <label>Комментарий<textarea name="comment1" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
+  </div>
+  <div class="grid two">
+    <label>Камера<input name="cam1" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block1"></label>
+    <label>Галерея / файлы<input name="gal1" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block1"></label>
+  </div>
+  <div class="preview" id="preview-block1"></div>
+</article>
+<article class="card" data-check-card="1" data-title="Несущие стены, колонны, каркас" data-weight="15">
+  <div class="card-title">2. Несущие стены, колонны, каркас <span class="weight">вес 15%</span></div>
+  <p class="muted">Что смотрит ЛПУ: Трещины, отклонения, разрушение кладки/бетона, оголение арматуры, следы коррозии, деформация проёмов</p>
+  <label>Балл визуального износа *<select name="score2" data-score="1" data-weight="15" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
+  <div class="grid two">
+    <label>Зона / этаж / помещение<input name="zone2" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
+    <label>Комментарий<textarea name="comment2" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
+  </div>
+  <div class="grid two">
+    <label>Камера<input name="cam2" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block2"></label>
+    <label>Галерея / файлы<input name="gal2" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block2"></label>
+  </div>
+  <div class="preview" id="preview-block2"></div>
+</article>
+<article class="card" data-check-card="1" data-title="Перекрытия, лестницы, пандусы" data-weight="10">
+  <div class="card-title">3. Перекрытия, лестницы, пандусы <span class="weight">вес 10%</span></div>
+  <p class="muted">Что смотрит ЛПУ: Прогибы, трещины, разрушение ступеней, вибрации, повреждение ограждений, скользкие или разрушенные покрытия</p>
+  <label>Балл визуального износа *<select name="score3" data-score="1" data-weight="10" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
+  <div class="grid two">
+    <label>Зона / этаж / помещение<input name="zone3" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
+    <label>Комментарий<textarea name="comment3" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
+  </div>
+  <div class="grid two">
+    <label>Камера<input name="cam3" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block3"></label>
+    <label>Галерея / файлы<input name="gal3" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block3"></label>
+  </div>
+  <div class="preview" id="preview-block3"></div>
+</article>
+<article class="card" data-check-card="1" data-title="Кровля и водоотведение" data-weight="10">
+  <div class="card-title">4. Кровля и водоотведение <span class="weight">вес 10%</span></div>
+  <p class="muted">Что смотрит ЛПУ: Протечки, пятна на потолках, разрушение покрытия, неисправные водостоки, наледь, намокание утеплителя</p>
+  <label>Балл визуального износа *<select name="score4" data-score="1" data-weight="10" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
+  <div class="grid two">
+    <label>Зона / этаж / помещение<input name="zone4" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
+    <label>Комментарий<textarea name="comment4" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
+  </div>
+  <div class="grid two">
+    <label>Камера<input name="cam4" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block4"></label>
+    <label>Галерея / файлы<input name="gal4" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block4"></label>
+  </div>
+  <div class="preview" id="preview-block4"></div>
+</article>
+<article class="card" data-check-card="1" data-title="Фасад, окна, наружные двери" data-weight="8">
+  <div class="card-title">5. Фасад, окна, наружные двери <span class="weight">вес 8%</span></div>
+  <p class="muted">Что смотрит ЛПУ: Разрушение фасада, выпадение штукатурки/плитки, негерметичные окна, продувание, промерзание, разрушение входных групп</p>
+  <label>Балл визуального износа *<select name="score5" data-score="1" data-weight="8" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
+  <div class="grid two">
+    <label>Зона / этаж / помещение<input name="zone5" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
+    <label>Комментарий<textarea name="comment5" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
+  </div>
+  <div class="grid two">
+    <label>Камера<input name="cam5" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block5"></label>
+    <label>Галерея / файлы<input name="gal5" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block5"></label>
+  </div>
+  <div class="preview" id="preview-block5"></div>
+</article>
+<article class="card" data-check-card="1" data-title="Внутренняя отделка лечебных и общих помещений" data-weight="8">
+  <div class="card-title">6. Внутренняя отделка лечебных и общих помещений <span class="weight">вес 8%</span></div>
+  <p class="muted">Что смотрит ЛПУ: Повреждение полов, стен, потолков, следы протечек, грибок, невозможность влажной уборки и дезинфекции</p>
+  <label>Балл визуального износа *<select name="score6" data-score="1" data-weight="8" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
+  <div class="grid two">
+    <label>Зона / этаж / помещение<input name="zone6" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
+    <label>Комментарий<textarea name="comment6" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
+  </div>
+  <div class="grid two">
+    <label>Камера<input name="cam6" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block6"></label>
+    <label>Галерея / файлы<input name="gal6" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block6"></label>
+  </div>
+  <div class="preview" id="preview-block6"></div>
+</article>
+<article class="card" data-check-card="1" data-title="Водоснабжение, канализация, сантехника" data-weight="8">
+  <div class="card-title">7. Водоснабжение, канализация, сантехника <span class="weight">вес 8%</span></div>
+  <p class="muted">Что смотрит ЛПУ: Протечки, запах канализации, засоры, коррозия труб, неисправные раковины, санузлы, душевые, отсутствие горячей воды</p>
+  <label>Балл визуального износа *<select name="score7" data-score="1" data-weight="8" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
+  <div class="grid two">
+    <label>Зона / этаж / помещение<input name="zone7" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
+    <label>Комментарий<textarea name="comment7" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
+  </div>
+  <div class="grid two">
+    <label>Камера<input name="cam7" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block7"></label>
+    <label>Галерея / файлы<input name="gal7" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block7"></label>
+  </div>
+  <div class="preview" id="preview-block7"></div>
+</article>
+<article class="card" data-check-card="1" data-title="Отопление, вентиляция, микроклимат" data-weight="10">
+  <div class="card-title">8. Отопление, вентиляция, микроклимат <span class="weight">вес 10%</span></div>
+  <p class="muted">Что смотрит ЛПУ: Холод/жара, духота, конденсат, жалобы, неработающие радиаторы, шум вентиляции, отсутствие вытяжки в санитарных и режимных помещениях</p>
+  <label>Балл визуального износа *<select name="score8" data-score="1" data-weight="10" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
+  <div class="grid two">
+    <label>Зона / этаж / помещение<input name="zone8" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
+    <label>Комментарий<textarea name="comment8" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
+  </div>
+  <div class="grid two">
+    <label>Камера<input name="cam8" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block8"></label>
+    <label>Галерея / файлы<input name="gal8" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block8"></label>
+  </div>
+  <div class="preview" id="preview-block8"></div>
+</article>
+<article class="card" data-check-card="1" data-title="Электроснабжение и освещение" data-weight="8">
+  <div class="card-title">9. Электроснабжение и освещение <span class="weight">вес 8%</span></div>
+  <p class="muted">Что смотрит ЛПУ: Аварийные отключения, перегрузки, старые щиты, открытая проводка, недостаточное освещение, неисправные розетки</p>
+  <label>Балл визуального износа *<select name="score9" data-score="1" data-weight="8" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
+  <div class="grid two">
+    <label>Зона / этаж / помещение<input name="zone9" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
+    <label>Комментарий<textarea name="comment9" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
+  </div>
+  <div class="grid two">
+    <label>Камера<input name="cam9" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block9"></label>
+    <label>Галерея / файлы<input name="gal9" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block9"></label>
+  </div>
+  <div class="preview" id="preview-block9"></div>
+</article>
+<article class="card" data-check-card="1" data-title="Пожарная безопасность и пути эвакуации" data-weight="8">
+  <div class="card-title">10. Пожарная безопасность и пути эвакуации <span class="weight">вес 8%</span></div>
+  <p class="muted">Что смотрит ЛПУ: Захламление путей эвакуации, неисправные двери, неработающие системы сигнализации/оповещения, закрытые эвакуационные выходы</p>
+  <label>Балл визуального износа *<select name="score10" data-score="1" data-weight="8" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
+  <div class="grid two">
+    <label>Зона / этаж / помещение<input name="zone10" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
+    <label>Комментарий<textarea name="comment10" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
+  </div>
+  <div class="grid two">
+    <label>Камера<input name="cam10" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block10"></label>
+    <label>Галерея / файлы<input name="gal10" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block10"></label>
+  </div>
+  <div class="preview" id="preview-block10"></div>
+</article>
+<article class="card" data-check-card="1" data-title="Санитарно-эпидемиологическое состояние и медицинская специфика" data-weight="5">
+  <div class="card-title">11. Санитарно-эпидемиологическое состояние и медицинская специфика <span class="weight">вес 5%</span></div>
+  <p class="muted">Что смотрит ЛПУ: Состояние процедурных, перевязочных, операционных, лабораторий, стерилизационных, отходов, белья, чистых/грязных потоков</p>
+  <label>Балл визуального износа *<select name="score11" data-score="1" data-weight="5" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
+  <div class="grid two">
+    <label>Зона / этаж / помещение<input name="zone11" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
+    <label>Комментарий<textarea name="comment11" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
+  </div>
+  <div class="grid two">
+    <label>Камера<input name="cam11" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block11"></label>
+    <label>Галерея / файлы<input name="gal11" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block11"></label>
+  </div>
+  <div class="preview" id="preview-block11"></div>
+</article></section>
+</form>
+
+<section id="report"></section>
+</div>
+
+<div class="sticky no-print"><div class="sticky-inner"><div><div class="small">Индекс / статус</div><div id="stickyText">Заполните блок 3</div></div><div class="sticky-num" id="stickyIndex">—</div></div></div>
+
+<script>
+(function() {
+'use strict';
+var photoStore = {};
+var lastIndex = null;
+function qsa(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+function qs(sel, root) { return (root || document).querySelector(sel); }
+function byId(id) { return document.getElementById(id); }
+function val(name) { var el = document.querySelector('[name="' + name + '"]'); return el ? (el.value || '') : ''; }
+function esc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function setStatus(text, cls) { var st = byId('scriptStatus'); if (st) { st.className = 'status ' + (cls || 'ok'); st.textContent = text; } }
+function conclusion(index, hasRed) {
+  if (hasRed) return {cls:'bad', text:'Выявлены красные флаги. Требуется внеплановое обследование специализированной организацией; до получения заключения рассмотреть ограничение эксплуатации соответствующей зоны.'};
+  if (index === null) return {cls:'warn', text:'Для вывода необходимо заполнить баллы по блоку 3.'};
+  if (index <= 20) return {cls:'ok', text:'Визуально удовлетворительное состояние. Рекомендуется плановое обслуживание и локальный текущий ремонт.'};
+  if (index <= 40) return {cls:'warn', text:'Умеренный износ. Рекомендуется сформировать программу текущего ремонта и уточнить дефектные зоны.'};
+  if (index <= 60) return {cls:'warn', text:'Существенный износ. Рекомендуется техническое обследование по ключевым конструкциям/системам и программа капитального ремонта.'};
+  if (index <= 80) return {cls:'bad', text:'Высокий износ. Требуется внеплановое обследование, приоритизация капитального ремонта и оценка ограничения эксплуатации отдельных зон.'};
+  return {cls:'bad', text:'Критическое состояние по визуальной оценке. Требуется срочное обследование специализированной организацией.'};
+}
+function recalculate(mark) {
+  try {
+    var total = 0, wsum = 0, filled = 0;
+    var scores = qsa('select[data-score="1"]');
+    scores.forEach(function(sel) {
+      var card = sel.closest('.card');
+      if (sel.value === '') { if (mark && card) card.classList.add('missing'); } else { if (card) card.classList.remove('missing'); total += Number(sel.value) * Number(sel.getAttribute('data-weight') || 0) / 100; filled++; }
+      wsum += Number(sel.getAttribute('data-weight') || 0);
+    });
+    var hasRed = false, redFilled = 0;
+    qsa('select[data-red="1"]').forEach(function(sel) {
+      var card = sel.closest('.card');
+      if (sel.value === '') { if (mark && card) card.classList.add('missing'); } else { if (card) card.classList.remove('missing'); redFilled++; if (sel.value === 'Да') hasRed = true; }
+    });
+    qsa('[data-required="1"]').forEach(function(el) { if (!el.value && mark) el.classList.add('field-missing'); else el.classList.remove('field-missing'); });
+    var index = filled ? Math.round(total * 10) / 10 : null; lastIndex = index;
+    var idxText = index === null ? '—' : String(index).replace('.', ',') + ' %';
+    var res = conclusion(index, hasRed);
+    byId('resultIndex').textContent = idxText;
+    byId('stickyIndex').textContent = idxText;
+    byId('resultSummary').textContent = 'Заполнено баллов: ' + filled + ' из ' + scores.length + '. Красные флаги: ' + (hasRed ? 'есть' : 'нет') + '. Проверено красных флагов: ' + redFilled + ' из ' + qsa('select[data-red="1"]').length + '.';
+    byId('stickyText').textContent = hasRed ? 'Есть красные флаги' : (index === null ? 'Заполните блок 3' : byId('resultSummary').textContent);
+    var box = byId('resultConclusion'); box.className = 'status ' + res.cls; box.textContent = res.text;
+    return { index:index, hasRed:hasRed, filled:filled, scoreCount:scores.length, redFilled:redFilled };
+  } catch(e) { setStatus('Ошибка расчёта: ' + (e.message || e), 'bad'); return {index:null,hasRed:false,filled:0,scoreCount:0}; }
+}
+function compressImage(file, callback) {
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var img = new Image();
+    img.onload = function() {
+      var max = 1200; var w = img.width, h = img.height;
+      if (w > h && w > max) { h = Math.round(h * max / w); w = max; }
+      else if (h >= w && h > max) { w = Math.round(w * max / h); h = max; }
+      var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+      var ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0,w,h);
+      callback(canvas.toDataURL('image/jpeg',0.72));
+    };
+    img.onerror = function() { callback(ev.target.result); };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function handlePhotos(input) {
+  var target = input.getAttribute('data-photo-target'); if (!target || !input.files) return;
+  if (!photoStore[target]) photoStore[target] = [];
+  Array.prototype.slice.call(input.files).forEach(function(file) {
+    if (!file.type || file.type.indexOf('image/') !== 0) return;
+    compressImage(file, function(dataUrl) { photoStore[target].push(dataUrl); renderPreview(target); });
+  });
+}
+function renderPreview(target) {
+  var box = byId('preview-' + target); if (!box) return; box.innerHTML = '';
+  (photoStore[target] || []).forEach(function(src) { var im = document.createElement('img'); im.src = src; box.appendChild(im); });
+}
+function reportPhotos(prefix) { return (photoStore[prefix] || []).map(function(src) { return '<img src="' + src + '" alt="Фото">'; }).join(''); }
+function buildReport(show) {
+  var r = recalculate(true);
+  var c = conclusion(r.index, r.hasRed);
+  var h = '<h1>Чек-лист визуальной самооценки износа здания медицинской организации</h1>';
+  h += '<p><b>Медицинская организация:</b> ' + esc(val('org')) + '</p><p><b>Адрес:</b> ' + esc(val('address')) + '</p><p><b>Корпус / здание:</b> ' + esc(val('building')) + '</p><p><b>Дата осмотра:</b> ' + esc(val('date')) + '</p><p><b>Заполнил:</b> ' + esc(val('person')) + ', ' + esc(val('role')) + '</p>';
+  h += '<h2>Предварительный результат</h2><p><b>Индекс:</b> ' + (r.index === null ? 'не рассчитан' : String(r.index).replace('.', ',') + ' %') + '</p><p><b>Вывод:</b> ' + esc(c.text) + '</p>';
+  h += '<h2>Красные флаги</h2><table><thead><tr><th>№</th><th>Признак</th><th>Ответ</th><th>Зона</th><th>Комментарий</th><th>Фото</th></tr></thead><tbody>';
+  qsa('[data-red-card="1"]').forEach(function(card, i) { h += '<tr><td>'+(i+1)+'</td><td>'+esc(card.getAttribute('data-title'))+'</td><td>'+esc(val('red'+(i+1)))+'</td><td>'+esc(val('redzone'+(i+1)))+'</td><td>'+esc(val('redcomment'+(i+1)))+'</td><td>'+reportPhotos('red'+(i+1))+'</td></tr>'; });
+  h += '</tbody></table><h2>Основной визуальный чек-лист</h2><table><thead><tr><th>№</th><th>Блок</th><th>Вес</th><th>Балл</th><th>Зона</th><th>Комментарий</th><th>Фото</th></tr></thead><tbody>';
+  qsa('[data-check-card="1"]').forEach(function(card, i) { h += '<tr><td>'+(i+1)+'</td><td>'+esc(card.getAttribute('data-title'))+'</td><td>'+esc(card.getAttribute('data-weight'))+'%</td><td>'+esc(val('score'+(i+1)))+'</td><td>'+esc(val('zone'+(i+1)))+'</td><td>'+esc(val('comment'+(i+1)))+'</td><td>'+reportPhotos('block'+(i+1))+'</td></tr>'; });
+  h += '</tbody></table><h2>Примечание</h2><p>Настоящая самооценка не является техническим обследованием здания и не заменяет заключение специализированной организации. Окончательная оценка технического состояния и безопасности эксплуатации выполняется в установленном порядке.</p>';
+  var rep = byId('report'); rep.innerHTML = h; if (show) rep.classList.add('visible'); return h;
+}
+function printReport() { buildReport(true); setTimeout(function() { window.print(); }, 200); }
+function downloadReport() {
+  var content = buildReport(false);
+  var doc = '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Отчёт</title><style>body{font-family:Arial,sans-serif;padding:20px}table{border-collapse:collapse;width:100%;font-size:12px}td,th{border:1px solid #999;padding:6px;vertical-align:top}th{background:#eee}img{max-width:160px;max-height:120px}</style></head><body>' + content + '</body></html>';
+  var blob = new Blob([doc], {type:'text/html;charset=utf-8'}); var url = URL.createObjectURL(blob); var a = document.createElement('a'); a.href = url; a.download = 'chek-list-iznosa-medorg.html'; document.body.appendChild(a); a.click(); setTimeout(function() { URL.revokeObjectURL(url); a.remove(); }, 1000);
+}
+function shareSummary() {
+  var r = recalculate(true); var c = conclusion(r.index, r.hasRed); var text = 'Чек-лист визуальной самооценки износа здания медицинской организации\n' + 'МО: ' + val('org') + '\nАдрес: ' + val('address') + '\nИндекс: ' + (r.index === null ? 'не рассчитан' : String(r.index).replace('.', ',') + ' %') + '\nВывод: ' + c.text;
+  if (navigator.share) { navigator.share({title:'Чек-лист износа', text:text}).catch(function(){}); }
+  else { location.href = 'mailto:?subject=' + encodeURIComponent('Чек-лист износа') + '&body=' + encodeURIComponent(text); }
+}
+function clearForm() { if (!confirm('Очистить заполненные данные?')) return; byId('checklistForm').reset(); photoStore = {}; qsa('.preview').forEach(function(p){p.innerHTML='';}); byId('report').classList.remove('visible'); byId('report').innerHTML=''; recalculate(false); }
+function bind() {
+  setStatus('Расчёт запущен. Выберите баллы в блоке 3 — индекс обновится автоматически.', 'ok');
+  document.addEventListener('change', function(ev) { var t = ev.target; if (!t) return; if (t.matches && t.matches('input[type="file"][data-photo="1"]')) { handlePhotos(t); return; } recalculate(false); }, true);
+  document.addEventListener('input', function() { recalculate(false); }, true);
+  document.addEventListener('touchend', function() { setTimeout(function() { recalculate(false); }, 80); }, true);
+  byId('btnCalc').addEventListener('click', function(){ recalculate(true); });
+  byId('btnReport').addEventListener('click', function(){ buildReport(true); });
+  byId('btnPrint').addEventListener('click', printReport);
+  byId('btnDownload').addEventListener('click', downloadReport);
+  byId('btnShare').addEventListener('click', shareSummary);
+  byId('btnClear').addEventListener('click', clearForm);
+  setInterval(function(){ recalculate(false); }, 500);
+  recalculate(false);
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind); else bind();
+window.addEventListener('load', function() { if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) navigator.serviceWorker.register('./service-worker.js').catch(function(){}); });
+})();
+</script>
+</body>
+</html>
