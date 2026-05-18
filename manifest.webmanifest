@@ -1,7 +1,7 @@
 {
   "name": "Чек-лист визуальной самооценки износа здания медицинской организации",
   "short_name": "Чек-лист износа",
-  "start_url": "./index.html",
+  "start_url": "./index.html?v=20",
   "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
